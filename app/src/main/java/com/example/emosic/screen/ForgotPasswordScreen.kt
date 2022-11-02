@@ -1,4 +1,4 @@
-package com.example.emosic.Screen
+package com.example.emosic.screen
 
 
 import android.content.Context
