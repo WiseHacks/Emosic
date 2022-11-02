@@ -2,6 +2,7 @@ package com.example.emosic
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
@@ -23,6 +24,9 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             if(data != null){
                 startDestination = Params.ResetPasswordScreenRoute
+            }
+            else{
+                Log.v("DEbug", "debug")
             }
             NavHost(navController = navController, startDestination = startDestination) {
                 composable(route = Params.LoginScreenRoute) {
