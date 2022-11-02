@@ -1,7 +1,7 @@
-package com.example.emosic.viewModel
+package com.example.emosic.Screen
+
 
 import android.content.Context
-import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,19 +12,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.emosic.R
 import com.example.emosic.utils.Params
 import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.runBlocking
 
 
 @Composable
-fun ResetPasswordScreen(context: Context, navController: NavController, data : Uri) {
+fun ForgotPasswordScreen(context: Context, navController: NavController) {
+    var email by remember {
+        mutableStateOf("")
+    }
     var password by remember{
         mutableStateOf("")
     }
@@ -38,12 +38,12 @@ fun ResetPasswordScreen(context: Context, navController: NavController, data : U
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlinedTextField(
-                value = password,
+                value = email,
                 onValueChange = {
-                    password = it
+                    email = it
                 },
                 label = {
-                    Text(text = "Enter New Password", color = Color.Gray)
+                    Text(text = "Enter Email", color = Color.Gray)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -60,8 +60,8 @@ fun ResetPasswordScreen(context: Context, navController: NavController, data : U
                 singleLine = true,
                 leadingIcon = {
                     Icon(
-                        painter = painterResource(R.drawable.ic_password),
-                        contentDescription = "Password Icon",
+                        imageVector = Icons.Default.Email,
+                        contentDescription = "Email Icon",
                         tint = Color.Blue,
                         modifier = Modifier.size(25.dp)
                     )
@@ -71,23 +71,19 @@ fun ResetPasswordScreen(context: Context, navController: NavController, data : U
             Button(onClick = {
                 try {
                     val app = App.create(Params.APP_ID)
-                    val token = data.getQueryParameter("token")
-                    val tokenId = data.getQueryParameter("tokenId")
                     runBlocking {
-                        if (token != null) {
-                            if (tokenId != null) {
-                                app.emailPasswordAuth.resetPassword(token, tokenId, password)
-                            }
-                        }
-                        Toast.makeText(context, "Reset Success", Toast.LENGTH_SHORT).show()
+                        app.emailPasswordAuth.sendResetPasswordEmail(email)
+                        Toast.makeText(context, "Confirm your reset mail", Toast.LENGTH_SHORT).show()
                         navController.navigate(Params.LoginScreenRoute)
+                        // this will send the email, now on opening the email we will have tokenid
+//                            app.emailPasswordAuth.res
                     }
                 } catch (e: Exception) {
                     Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
                 }
 
             }) {
-                Text(text = "RESET PASSWORD")
+                Text(text = "SEND RESET LINK")
             }
 
         }

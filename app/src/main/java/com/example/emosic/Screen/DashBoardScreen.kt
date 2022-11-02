@@ -1,4 +1,4 @@
-package com.example.emosic.viewModel
+package com.example.emosic.Screen
 
 import android.content.Context
 import androidx.compose.foundation.layout.Box

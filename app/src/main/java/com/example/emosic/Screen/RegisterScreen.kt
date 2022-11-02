@@ -1,7 +1,6 @@
-package com.example.emosic.viewModel
+package com.example.emosic.Screen
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -13,17 +12,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.emosic.MainActivity
 import com.example.emosic.data.User
 import com.example.emosic.utils.Params
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.Credentials
-import io.realm.kotlin.mongodb.subscriptions
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
 import io.realm.kotlin.types.ObjectId
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 
 @Composable

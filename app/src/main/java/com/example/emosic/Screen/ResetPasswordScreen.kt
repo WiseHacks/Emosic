@@ -1,18 +1,15 @@
-package com.example.emosic.viewModel
-
+package com.example.emosic.Screen
 
 import android.content.Context
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -24,10 +21,7 @@ import kotlinx.coroutines.runBlocking
 
 
 @Composable
-fun ForgotPasswordScreen(context: Context, navController: NavController) {
-    var email by remember {
-        mutableStateOf("")
-    }
+fun ResetPasswordScreen(context: Context, navController: NavController, data : Uri) {
     var password by remember{
         mutableStateOf("")
     }
@@ -41,12 +35,12 @@ fun ForgotPasswordScreen(context: Context, navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlinedTextField(
-                value = email,
+                value = password,
                 onValueChange = {
-                    email = it
+                    password = it
                 },
                 label = {
-                    Text(text = "Enter Email", color = Color.Gray)
+                    Text(text = "Enter New Password", color = Color.Gray)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -63,8 +57,8 @@ fun ForgotPasswordScreen(context: Context, navController: NavController) {
                 singleLine = true,
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Default.Email,
-                        contentDescription = "Email Icon",
+                        painter = painterResource(R.drawable.ic_password),
+                        contentDescription = "Password Icon",
                         tint = Color.Blue,
                         modifier = Modifier.size(25.dp)
                     )
@@ -74,19 +68,23 @@ fun ForgotPasswordScreen(context: Context, navController: NavController) {
             Button(onClick = {
                 try {
                     val app = App.create(Params.APP_ID)
+                    val token = data.getQueryParameter("token")
+                    val tokenId = data.getQueryParameter("tokenId")
                     runBlocking {
-                        app.emailPasswordAuth.sendResetPasswordEmail(email)
-                        Toast.makeText(context, "Confirm your reset mail", Toast.LENGTH_SHORT).show()
+                        if (token != null) {
+                            if (tokenId != null) {
+                                app.emailPasswordAuth.resetPassword(token, tokenId, password)
+                            }
+                        }
+                        Toast.makeText(context, "Reset Success", Toast.LENGTH_SHORT).show()
                         navController.navigate(Params.LoginScreenRoute)
-                        // this will send the email, now on opening the email we will have tokenid
-//                            app.emailPasswordAuth.res
                     }
                 } catch (e: Exception) {
                     Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
                 }
 
             }) {
-                Text(text = "SEND RESET LINK")
+                Text(text = "RESET PASSWORD")
             }
 
         }
