@@ -7,4 +7,5 @@ object Params{
     const val DashBoardScreenRoute = "dashboard_screen_route"
     const val ForgotPasswordScreenRoute = "forgot_password_screen_route"
     const val ResetPasswordScreenRoute = "reset_password_screen_route"
+    const val CapturePhotoScreenRoute = "capture_photo_screen_route"
 }

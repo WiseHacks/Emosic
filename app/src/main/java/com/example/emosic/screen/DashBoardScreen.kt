@@ -1,6 +1,7 @@
 package com.example.emosic.screen
 
 import android.content.Context
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -29,9 +30,12 @@ fun DashBoardScreen(
             .fillMaxWidth()
             .align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = "WELCOME", modifier = Modifier
+            Text(text = "WELCOME - open camera", modifier = Modifier
                 .fillMaxWidth()
-                .size(70.dp), textAlign = TextAlign.Center)
+                .size(70.dp)
+                .clickable {
+                           navController.navigate(Params.CapturePhotoScreenRoute)
+                }, textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(10.dp))
             Button(
                 onClick = {
