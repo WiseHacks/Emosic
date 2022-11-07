@@ -30,10 +30,12 @@ import com.example.emosic.utils.ProgressIndicator
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.ext.realmSetOf
 import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.Credentials
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
 import io.realm.kotlin.types.ObjectId
+import io.realm.kotlin.types.RealmList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.reflect.typeOf
@@ -261,7 +263,8 @@ fun register(name: String, age: Int, email: String, password: String, context: C
     runBlocking {
         val user = app.login(Credentials.emailPassword(email, password))
         val config = SyncConfiguration.Builder(user, setOf(User::class))
-            .name("realm name")
+            .name("realm name 1")
+            .schemaVersion(Params.REALM_DB_VERSION)
             .initialSubscriptions(initialSubscriptionBlock = { realm ->
                 add(
                     realm.query<User>(
@@ -280,6 +283,8 @@ fun register(name: String, age: Int, email: String, password: String, context: C
                 this.name = name
                 this.email = email
                 this.age = age
+                this.likedSongs = realmSetOf("")
+                this.subscribedChannels = realmSetOf("")
             })
         }
 //        Log.e("User Login", "Logged in")

@@ -19,6 +19,7 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+        buildConfigField("String", "YOUTUBE_API_KEY", YOUTUBE_API_KEY)
     }
 
     buildTypes {
@@ -49,6 +50,10 @@ android {
 
 dependencies {
 //    implementation "io.coil-kt:coil-compose:1.4.0"
+    implementation files('libs/YouTubeAndroidPlayerApi.jar')
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
     implementation 'dev.chrisbanes.accompanist:accompanist-insets:0.6.2'
     def camerax_version = "1.0.1"
     implementation "androidx.camera:camera-camera2:$camerax_version"

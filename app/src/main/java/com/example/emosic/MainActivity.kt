@@ -29,7 +29,7 @@ import java.util.concurrent.Executors
 import kotlin.coroutines.suspendCoroutine
 
 class MainActivity : ComponentActivity() {
-//    Camera things...
+    //    Camera things...
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var photoUri: Uri
@@ -48,7 +48,8 @@ class MainActivity : ComponentActivity() {
         }
         return if (mediaDir != null && mediaDir.exists()) mediaDir else filesDir
     }
-//    Camera things...
+
+    //    Camera things...
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val action: String? = intent?.action
@@ -59,30 +60,29 @@ class MainActivity : ComponentActivity() {
                 mutableStateOf(Params.LoginScreenRoute)
             }
             val navController = rememberNavController()
-            if(data != null){
+            if (data != null) {
                 startDestination = Params.ResetPasswordScreenRoute
-            }
-            else{
+            } else {
                 Log.v("DEbug", "debug")
             }
             val app = App.create(Params.APP_ID)
-            if(app.currentUser?.loggedIn == true){
+            if (app.currentUser?.loggedIn == true) {
                 startDestination = Params.DashBoardScreenRoute
             }
             NavHost(navController = navController, startDestination = startDestination) {
                 composable(route = Params.LoginScreenRoute) {
                     LoginScreen(context = this@MainActivity, navController = navController)
                 }
-                composable(route = Params.RegisterScreenRoute){
+                composable(route = Params.RegisterScreenRoute) {
                     RegisterUserScreen(context = this@MainActivity, navController = navController)
                 }
-                composable(route = Params.DashBoardScreenRoute){
+                composable(route = Params.DashBoardScreenRoute) {
                     DashBoardScreen(context = this@MainActivity, navController = navController)
                 }
-                composable(route = Params.ForgotPasswordScreenRoute){
+                composable(route = Params.ForgotPasswordScreenRoute) {
                     ForgotPasswordScreen(context = this@MainActivity, navController = navController)
                 }
-                composable(route = Params.ResetPasswordScreenRoute){
+                composable(route = Params.ResetPasswordScreenRoute) {
                     if (data != null) {
                         ResetPasswordScreen(
                             context = this@MainActivity,
@@ -91,8 +91,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
-                composable(route = Params.CapturePhotoScreenRoute){
-                    if(shouldShowCamera.value) {
+                composable(route = Params.CapturePhotoScreenRoute) {
+                    if (shouldShowCamera.value) {
                         CapturePhotoScreenView(
                             context = this@MainActivity,
                             navController = navController,
@@ -103,15 +103,22 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     if (shouldShowPhoto.value) {
-                        if (shouldShowPhoto.value) {
-                            Log.e("emosic", photoUri.toString())
-//                            Image(
-//                                painter = rememberImagePainter(photoUri),
-//                                contentDescription = null,
-//                                modifier = Modifier.fillMaxSize()
-//                            )
-                        }
+                        Log.e("emosic_cam", photoUri.toString())
+                        navController.popBackStack()
+                        navController.navigate(Params.MusicPredictionScreenRoute)
+                        shouldShowPhoto.value = false
+//                        Image(
+//                            painter = rememberImagePainter(photoUri),
+//                            contentDescription = null,
+//                            modifier = Modifier.fillMaxSize()
+//                        )
                     }
+                }
+                composable(route = Params.MusicPredictionScreenRoute){
+                    MusicPredictionScreen(
+                        context = this@MainActivity,
+                        navController = navController
+                    )
                 }
             }
         }
@@ -121,6 +128,7 @@ class MainActivity : ComponentActivity() {
         cameraExecutor = Executors.newSingleThreadExecutor()
 //        Camera things
     }
+
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -131,6 +139,7 @@ class MainActivity : ComponentActivity() {
             Log.i("emosic", "Permission denied")
         }
     }
+
     private fun requestCameraPermission() {
         when {
             ContextCompat.checkSelfPermission(
