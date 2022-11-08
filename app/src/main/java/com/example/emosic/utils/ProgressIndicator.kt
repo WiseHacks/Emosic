@@ -8,6 +8,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -16,6 +17,12 @@ fun ProgressIndicator(){
         modifier = Modifier.padding(15.dp).fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(modifier = Modifier.size(20.dp))
+        CircularProgressIndicator(modifier = Modifier.size(50.dp), color = Color(
+            0.659f,
+            0.106f,
+            0.263f,
+            1.0f
+        )
+        )
     }
 }

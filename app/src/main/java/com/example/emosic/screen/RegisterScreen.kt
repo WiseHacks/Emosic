@@ -3,6 +3,8 @@ package com.example.emosic.screen
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -27,6 +29,7 @@ import com.example.emosic.data.User
 import com.example.emosic.utils.BackgroundImageGuitar
 import com.example.emosic.utils.Params
 import com.example.emosic.utils.ProgressIndicator
+import com.example.emosic.utils.WelcomeImage
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
@@ -63,9 +66,6 @@ fun RegisterUserScreen(context: Context, navController: NavController) {
         var showProgress by remember {
             mutableStateOf(false)
         }
-        if(showProgress){
-            ProgressIndicator()
-        }
         Card(modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp, vertical = 100.dp)
@@ -84,14 +84,7 @@ fun RegisterUserScreen(context: Context, navController: NavController) {
                 state = listState
             ) {
                 item {
-                    Box(modifier = Modifier.height(350.dp), contentAlignment = Alignment.Center) {
-                        // CHANGE HEIGHT - MAYBE 0.25f
-                        Image(
-                            painter = painterResource(id = R.drawable.emosic_welcome),
-                            contentDescription = "Welcome Icon",
-                            Modifier.size(250.dp)
-                        )
-                    }
+                    WelcomeImage()
                 }
                 item {
                     OutlinedTextField(
@@ -226,6 +219,9 @@ fun RegisterUserScreen(context: Context, navController: NavController) {
                     Spacer(modifier = Modifier.height(10.dp))
                 }
                 item {
+                    val interactionSource = remember { MutableInteractionSource() }
+                    val isPressed by interactionSource.collectIsPressedAsState()
+                    val color = if (isPressed) Color.Gray else Color(0xFFFF6200EE)
                     Button(onClick = {
                         try {
                             showProgress = true
@@ -236,7 +232,7 @@ fun RegisterUserScreen(context: Context, navController: NavController) {
                                 )
                             }
                             register(name, age.toInt(), email, password, context)
-                            showProgress = false
+//                            showProgress = false
                             navController.popBackStack()
                             navController.navigate(Params.DashBoardScreenRoute)
                         } catch (e: Exception) {
@@ -245,7 +241,10 @@ fun RegisterUserScreen(context: Context, navController: NavController) {
                                 .show()
                         }
 //                TO DO("CHECK for success register")
-                    }) {
+                    },
+                    interactionSource = interactionSource,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = color)
+                    ) {
                         Text(text = "REGISTER")
                     }
                 }
@@ -254,6 +253,9 @@ fun RegisterUserScreen(context: Context, navController: NavController) {
                     Box(modifier = Modifier.height(400.dp))
                 }
             }
+//            if(showProgress){
+//                ProgressIndicator()
+//            }
         }
     }
 }

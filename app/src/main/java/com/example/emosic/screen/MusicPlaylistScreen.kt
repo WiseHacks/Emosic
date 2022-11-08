@@ -14,8 +14,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.chaquo.python.Python
 import com.example.emosic.data.SearchResponse
+import com.example.emosic.repository.UserDataRepositoryImpl
 import com.example.emosic.service.YoutubeApi
+import com.example.emosic.utils.Params
+import io.realm.kotlin.mongodb.App
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.Callback
@@ -42,6 +46,10 @@ fun MusicPredictionScreen(
             })
             Spacer(modifier = Modifier.height(30.dp))
             Button(onClick = {
+//                val py = Python.getInstance()
+//                val module = py.getModule("plot")
+//                val sum = module.callAttr("plot", 1, 2)
+//                Log.v("PythonCheck", sum.toString())
                 YoutubeApi.apiInstance().search(searchString = query, maxResults = 50).enqueue(object : Callback<SearchResponse> {
                     override fun onResponse(
                         call: Call<SearchResponse>,
@@ -51,13 +59,15 @@ fun MusicPredictionScreen(
                         Log.v("query_res", result.toString())
                         if (result != null) {
                             Log.v("query_res", result.size.toString())
+                            UserDataRepositoryImpl().getUserData()
+                                ?.let { Log.v("query_exp_changelater", it._id.toString()) }
                         }
                     }
-
                     override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
                         Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show()
                     }
                 })
+
             }) {
                 Text(text = "Search")
             }

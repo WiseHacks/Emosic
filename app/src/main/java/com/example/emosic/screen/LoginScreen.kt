@@ -6,6 +6,8 @@ import androidx.compose.animation.AnimatedContentScope.SlideDirection.Companion.
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -13,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.runtime.*
@@ -37,6 +40,7 @@ import com.example.emosic.R
 import com.example.emosic.utils.BackgroundImageGuitar
 import com.example.emosic.utils.Params
 import com.example.emosic.utils.ProgressIndicator
+import com.example.emosic.utils.WelcomeImage
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import dev.chrisbanes.accompanist.insets.imePadding
 import io.realm.kotlin.mongodb.App
@@ -63,9 +67,6 @@ fun LoginScreen(
         var showProgress by remember {
             mutableStateOf(false)
         }
-        if(showProgress){
-            ProgressIndicator()
-        }
         Card(modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp, vertical = 100.dp)
@@ -84,14 +85,7 @@ fun LoginScreen(
                 state = listState
             ) {
                 item {
-                    Box(modifier = Modifier.height(350.dp), contentAlignment = Alignment.Center) {
-                        // CHANGE HEIGHT - MAYBE 0.25f
-                        Image(
-                            painter = painterResource(id = R.drawable.emosic_welcome),
-                            contentDescription = "Welcome Icon",
-                            Modifier.size(250.dp)
-                        )
-                    }
+                    WelcomeImage()
                 }
                 item {
                     OutlinedTextField(
@@ -177,11 +171,13 @@ fun LoginScreen(
                     Spacer(modifier = Modifier.height(10.dp))
                 }
                 item {
+                    val interactionSource = remember { MutableInteractionSource() }
+                    val isPressed by interactionSource.collectIsPressedAsState()
+                    val color = if (isPressed) Color.Gray else Color(0xFFFF6200EE)
                     Button(onClick = {
                         try {
                             showProgress = true
                             login(email, password)
-                            showProgress = false
                             navController.popBackStack()
                             navController.navigate(Params.DashBoardScreenRoute)
                         } catch (e: Exception) {
@@ -190,7 +186,10 @@ fun LoginScreen(
                                 .show()
                         }
 //                TO DO("CHECK for success login - maybe try catch will help")
-                    }) {
+                    },
+                        interactionSource = interactionSource,
+                        colors = ButtonDefaults.buttonColors(backgroundColor = color)
+                    ) {
                         Text(text = "SIGN IN")
                     }
                     Spacer(modifier = Modifier.height(10.dp))
@@ -224,6 +223,9 @@ fun LoginScreen(
                     Box(modifier = Modifier.height(400.dp))
                 }
             }
+//            if(showProgress) {
+//                ProgressIndicator()
+//            }
         }
     }
 }
