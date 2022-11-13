@@ -48,6 +48,7 @@ import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import dev.chrisbanes.accompanist.insets.imePadding
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.suspendCoroutine
 
 @Composable
 fun LoginScreen(
@@ -175,20 +176,29 @@ fun LoginScreen(
                     val interactionSource = remember { MutableInteractionSource() }
                     val isPressed by interactionSource.collectIsPressedAsState()
                     val color = if (isPressed) Color.Gray else Color(0xFFFF6200EE)
-                    var res by remember {
-                        mutableStateOf("")
-                    }
                     Button(onClick = {
                         try {
                             showProgress = true
                             CoroutineScope(Dispatchers.IO).launch {
-                                res = login(email, password).toString()
-                            }
-                            if(res != null){
-                                Toast.makeText(context, "Success", Toast.LENGTH_SHORT)
-                                    .show()
-                                navController.popBackStack()
-                                navController.navigate(Params.DashBoardScreenRoute)
+                                try{
+                                    login(email, password)
+                                    withContext(Dispatchers.Main){
+                                        Toast.makeText(context, "Success", Toast.LENGTH_SHORT)
+                                            .show()
+                                        navController.popBackStack()
+                                        navController.navigate(Params.DashBoardScreenRoute)
+                                    }
+                                }catch (e : Exception){
+                                    withContext(Dispatchers.Main) {
+                                        showProgress = false
+                                        Toast.makeText(
+                                            context,
+                                            "Something went wrong",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                    }
+                                }
                             }
                         } catch (e: Exception) {
                             showProgress = false
@@ -240,11 +250,7 @@ fun LoginScreen(
     }
 }
 
-suspend fun login(email: String, password: String) : AuthResult?{
-   return try {
-       val auth = FirebaseAuth.getInstance()
-       auth.signInWithEmailAndPassword(email, password).await()
-   }catch (e : Exception){
-       return null
-   }
+suspend fun login(email: String, password: String){
+    val auth = FirebaseAuth.getInstance()
+    auth.signInWithEmailAndPassword(email, password).await()
 }

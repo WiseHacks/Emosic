@@ -64,6 +64,7 @@ fun MusicPredictionScreen(
                             CoroutineScope(Dispatchers.IO).launch {
                                 user = UserDataRepositoryImpl().getUserData()
                             }
+                            // withcontext can be used
                             if(user != null)Log.v("query_exp_changelater", user.toString())
                         }
                     }

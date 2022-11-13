@@ -33,10 +33,7 @@ import com.example.emosic.utils.WelcomeImage
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 
 @Composable
@@ -46,7 +43,7 @@ fun RegisterUserScreen(context: Context, navController: NavController) {
         mutableStateOf("")
     }
     var age by remember {
-        mutableStateOf("")
+        mutableStateOf("0")
     }
     var email by remember {
         mutableStateOf("")
@@ -218,21 +215,26 @@ fun RegisterUserScreen(context: Context, navController: NavController) {
                     val interactionSource = remember { MutableInteractionSource() }
                     val isPressed by interactionSource.collectIsPressedAsState()
                     val color = if (isPressed) Color.Gray else Color(0xFFFF6200EE)
-                    var res by remember{
-                        mutableStateOf("")
-                    }
                     Button(onClick = {
                         try {
                             showProgress = true
                             CoroutineScope(Dispatchers.IO).launch {
-                                val user = User(name = name, email = email, age = age.toInt())
-                                res = register(user, password).toString()
-                            }
-                            if(res != null){
-                                Toast.makeText(context, "Success", Toast.LENGTH_SHORT)
-                                    .show()
-                                navController.popBackStack()
-                                navController.navigate(Params.DashBoardScreenRoute)
+                                try{
+                                    val user = User(name = name, email = email, age = age.toInt())
+                                    register(user, password)
+                                    withContext(Dispatchers.Main){
+                                        Toast.makeText(context, "Success", Toast.LENGTH_SHORT)
+                                            .show()
+                                        navController.popBackStack()
+                                        navController.navigate(Params.DashBoardScreenRoute)
+                                    }
+                                }catch(e:Exception){
+                                    withContext(Dispatchers.Main){
+                                        showProgress = false
+                                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                                }
                             }
                         } catch (e: Exception) {
                             showProgress = false
@@ -259,22 +261,18 @@ fun RegisterUserScreen(context: Context, navController: NavController) {
     }
 }
 
-suspend fun register(user: User, password : String) : Void? {
-    return try {
-        val auth = FirebaseAuth.getInstance()
-        auth.createUserWithEmailAndPassword(user.email, password).await()
-        val db = FirebaseFirestore.getInstance()
-        val temp = HashMap<String, Any>()
-        temp["name"] = user.name
-        temp["age"] = user.age
-        temp["email"] = user.email
-        temp["likedSongs"] = user.likedSongs
-        temp["subscribedChannels"] = user.subscribedChannels
-        db.collection("User")
-            .document(auth.currentUser?.uid.toString())
-            .set(temp)
-            .await()
-    }catch(e:Exception){
-        return null
-    }
+suspend fun register(user: User, password : String) {
+    val auth = FirebaseAuth.getInstance()
+    auth.createUserWithEmailAndPassword(user.email, password).await()
+    val db = FirebaseFirestore.getInstance()
+    val temp = HashMap<String, Any>()
+    temp["name"] = user.name
+    temp["age"] = user.age
+    temp["email"] = user.email
+    temp["likedSongs"] = user.likedSongs
+    temp["subscribedChannels"] = user.subscribedChannels
+    db.collection("User")
+        .document(auth.currentUser?.uid.toString())
+        .set(temp)
+        .await()
 }
