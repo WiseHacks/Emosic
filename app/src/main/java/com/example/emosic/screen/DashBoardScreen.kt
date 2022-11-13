@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.emosic.R
 import com.example.emosic.utils.*
+import com.google.firebase.auth.FirebaseAuth
 import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.runBlocking
 
@@ -226,11 +227,8 @@ fun DashBoardScreen(
                             .alpha(1f)
                             .clickable {
                                 color = Color(0xFFFF28AC)
-                                val app = App.create(Params.APP_ID)
                                 showProgress = true
-                                runBlocking {
-                                    app.currentUser?.logOut()
-                                }
+                                FirebaseAuth.getInstance().signOut()
                                 navController.popBackStack()
                                 navController.navigate(Params.LoginScreenRoute)
                             },

@@ -1,37 +1,35 @@
 package com.example.emosic.repository
 
+import android.util.Log
 import com.example.emosic.data.User
 import com.example.emosic.utils.Params
-import io.realm.kotlin.Realm
-import io.realm.kotlin.ext.query
-import io.realm.kotlin.mongodb.App
-import io.realm.kotlin.mongodb.sync.SyncConfiguration
-import io.realm.kotlin.types.ObjectId
-import io.realm.kotlin.types.annotations.PrimaryKey
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
 
 class UserDataRepositoryImpl {
-    val app = App.create(Params.APP_ID)
-    val user = app.currentUser
-    fun getUserData(): User? {
-        val config = user?.let {
-            SyncConfiguration.Builder(it, setOf(User::class))
-                .name("realm name 1")
-                .schemaVersion(Params.REALM_DB_VERSION)
-                .initialSubscriptions(initialSubscriptionBlock = { realm ->
-                    add(
-                        realm.query<User>(
-                        ),
-                        "subscription name"
-                    )
-                })
-                .build()
+    suspend fun getUserData(): User? {
+        return try {
+            val db = FirebaseFirestore.getInstance()
+            val snapshot = db.collection("User")
+                .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                .get()
+                .await()
+            var user:User? = null
+            if(snapshot.exists()){
+                user = User(
+                    snapshot.get("name").toString(),
+                    snapshot.get("email").toString(),
+                    snapshot.get("age").toString().toInt(),
+                    snapshot.get("likedSongs") as ArrayList<String>,
+                    snapshot.get("subscribedChannels") as ArrayList<String>,
+                )
+            }
+            return user
+        }catch (e:Exception){
+            return null
         }
-        val realm = config?.let { Realm.open(it) }
-        fun closeRealm(){
-            realm?.close()
-        }
-        val objId = user?.let { ObjectId.from(it.id) }
-        val data : User? = realm?.query<User>("_id == $0", objId)?.first()?.find()
-        return data
     }
 }

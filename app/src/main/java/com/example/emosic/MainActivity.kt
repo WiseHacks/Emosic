@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.emosic.utils.Params
 import com.example.emosic.screen.*
+import com.google.firebase.auth.FirebaseAuth
 import io.realm.kotlin.mongodb.App
 import java.io.File
 import java.util.concurrent.ExecutorService
@@ -52,21 +53,13 @@ class MainActivity : ComponentActivity() {
     //    Camera things...
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val action: String? = intent?.action
-        val data: Uri? = intent?.data
 //        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         setContent {
             var startDestination by remember {
                 mutableStateOf(Params.LoginScreenRoute)
             }
             val navController = rememberNavController()
-            if (data != null) {
-                startDestination = Params.ResetPasswordScreenRoute
-            } else {
-                Log.v("DEbug", "debug")
-            }
-            val app = App.create(Params.APP_ID)
-            if (app.currentUser?.loggedIn == true) {
+            if(FirebaseAuth.getInstance().currentUser != null){
                 startDestination = Params.DashBoardScreenRoute
             }
             NavHost(navController = navController, startDestination = startDestination) {
@@ -82,16 +75,10 @@ class MainActivity : ComponentActivity() {
                 composable(route = Params.ForgotPasswordScreenRoute) {
                     ForgotPasswordScreen(context = this@MainActivity, navController = navController)
                 }
-                composable(route = Params.ResetPasswordScreenRoute) {
-                    if (data != null) {
-                        ResetPasswordScreen(
-                            context = this@MainActivity,
-                            navController = navController,
-                            data = data
-                        )
-                    }
-                }
                 composable(route = Params.CapturePhotoScreenRoute) {
+                    requestCameraPermission()
+                    outputDirectory = getOutputDirectory()
+                    cameraExecutor = Executors.newSingleThreadExecutor()
                     if (shouldShowCamera.value) {
                         CapturePhotoScreenView(
                             context = this@MainActivity,

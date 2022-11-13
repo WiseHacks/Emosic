@@ -27,6 +27,7 @@ import androidx.compose.ui.focus.FocusDirection.Companion.Down
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -41,12 +42,12 @@ import com.example.emosic.utils.BackgroundImageGuitar
 import com.example.emosic.utils.Params
 import com.example.emosic.utils.ProgressIndicator
 import com.example.emosic.utils.WelcomeImage
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import dev.chrisbanes.accompanist.insets.imePadding
-import io.realm.kotlin.mongodb.App
-import io.realm.kotlin.mongodb.Credentials
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 
 @Composable
 fun LoginScreen(
@@ -174,12 +175,21 @@ fun LoginScreen(
                     val interactionSource = remember { MutableInteractionSource() }
                     val isPressed by interactionSource.collectIsPressedAsState()
                     val color = if (isPressed) Color.Gray else Color(0xFFFF6200EE)
+                    var res by remember {
+                        mutableStateOf("")
+                    }
                     Button(onClick = {
                         try {
                             showProgress = true
-                            login(email, password)
-                            navController.popBackStack()
-                            navController.navigate(Params.DashBoardScreenRoute)
+                            CoroutineScope(Dispatchers.IO).launch {
+                                res = login(email, password).toString()
+                            }
+                            if(res != null){
+                                Toast.makeText(context, "Success", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.popBackStack()
+                                navController.navigate(Params.DashBoardScreenRoute)
+                            }
                         } catch (e: Exception) {
                             showProgress = false
                             Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT)
@@ -223,20 +233,18 @@ fun LoginScreen(
                     Box(modifier = Modifier.height(400.dp))
                 }
             }
-//            if(showProgress) {
-//                ProgressIndicator()
-//            }
+            if(showProgress) {
+                ProgressIndicator()
+            }
         }
     }
 }
 
-fun login(email: String, password: String) {
-    val app = App.create(Params.APP_ID)
-    runBlocking {
-        val user = app.login(Credentials.emailPassword(email, password))
-//        val config = SyncConfiguration.Builder(user, setOf(User::class)).build()
-//        val realm = Realm.open(config)
-//        Log.e("User Login", "Logged in")
-//        realm.close()
-    }
+suspend fun login(email: String, password: String) : AuthResult?{
+   return try {
+       val auth = FirebaseAuth.getInstance()
+       auth.signInWithEmailAndPassword(email, password).await()
+   }catch (e : Exception){
+       return null
+   }
 }

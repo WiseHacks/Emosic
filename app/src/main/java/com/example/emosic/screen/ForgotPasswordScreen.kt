@@ -16,8 +16,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.emosic.utils.Params
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 
 
 @Composable
@@ -70,14 +73,15 @@ fun ForgotPasswordScreen(context: Context, navController: NavController) {
             Spacer(modifier = Modifier.height(10.dp))
             Button(onClick = {
                 try {
-                    val app = App.create(Params.APP_ID)
-                    runBlocking {
-                        app.emailPasswordAuth.sendResetPasswordEmail(email)
-                        Toast.makeText(context, "Confirm your reset mail", Toast.LENGTH_SHORT).show()
-                        navController.navigate(Params.LoginScreenRoute)
-                        // this will send the email, now on opening the email we will have tokenid
-//                            app.emailPasswordAuth.res
-                    }
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                        .addOnCompleteListener {
+                            if(it.isSuccessful){
+                                Toast.makeText(context, "Reset link has been sent", Toast.LENGTH_SHORT).show()
+                            }
+                            else{
+                                Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                 } catch (e: Exception) {
                     Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
                 }
@@ -85,7 +89,6 @@ fun ForgotPasswordScreen(context: Context, navController: NavController) {
             }) {
                 Text(text = "SEND RESET LINK")
             }
-
         }
     }
 }

@@ -30,18 +30,14 @@ import com.example.emosic.utils.BackgroundImageGuitar
 import com.example.emosic.utils.Params
 import com.example.emosic.utils.ProgressIndicator
 import com.example.emosic.utils.WelcomeImage
-import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
-import io.realm.kotlin.Realm
-import io.realm.kotlin.ext.query
-import io.realm.kotlin.ext.realmSetOf
-import io.realm.kotlin.mongodb.App
-import io.realm.kotlin.mongodb.Credentials
-import io.realm.kotlin.mongodb.sync.SyncConfiguration
-import io.realm.kotlin.types.ObjectId
-import io.realm.kotlin.types.RealmList
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlin.reflect.typeOf
+import kotlinx.coroutines.tasks.await
 
 @Composable
 fun RegisterUserScreen(context: Context, navController: NavController) {
@@ -222,19 +218,22 @@ fun RegisterUserScreen(context: Context, navController: NavController) {
                     val interactionSource = remember { MutableInteractionSource() }
                     val isPressed by interactionSource.collectIsPressedAsState()
                     val color = if (isPressed) Color.Gray else Color(0xFFFF6200EE)
+                    var res by remember{
+                        mutableStateOf("")
+                    }
                     Button(onClick = {
                         try {
                             showProgress = true
-                            runBlocking {
-                                App.create(Params.APP_ID).emailPasswordAuth.registerUser(
-                                    email,
-                                    password
-                                )
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val user = User(name = name, email = email, age = age.toInt())
+                                res = register(user, password).toString()
                             }
-                            register(name, age.toInt(), email, password, context)
-//                            showProgress = false
-                            navController.popBackStack()
-                            navController.navigate(Params.DashBoardScreenRoute)
+                            if(res != null){
+                                Toast.makeText(context, "Success", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.popBackStack()
+                                navController.navigate(Params.DashBoardScreenRoute)
+                            }
                         } catch (e: Exception) {
                             showProgress = false
                             Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT)
@@ -253,43 +252,29 @@ fun RegisterUserScreen(context: Context, navController: NavController) {
                     Box(modifier = Modifier.height(400.dp))
                 }
             }
-//            if(showProgress){
-//                ProgressIndicator()
-//            }
+            if(showProgress){
+                ProgressIndicator()
+            }
         }
     }
 }
 
-fun register(name: String, age: Int, email: String, password: String, context: Context) {
-    val app = App.create(Params.APP_ID)
-    runBlocking {
-        val user = app.login(Credentials.emailPassword(email, password))
-        val config = SyncConfiguration.Builder(user, setOf(User::class))
-            .name("realm name 1")
-            .schemaVersion(Params.REALM_DB_VERSION)
-            .initialSubscriptions(initialSubscriptionBlock = { realm ->
-                add(
-                    realm.query<User>(
-                        // $0 is first argument, and then so on..
-//                        "_id == $0",
-//                        "${ObjectId.from(user.id)}"
-                    ),
-                    "subscription name"
-                )
-            })
-            .build()
-        val realm = Realm.open(config)
-        realm.write {
-            this.copyToRealm(User().apply {
-                this._id = ObjectId.from(user.id)
-                this.name = name
-                this.email = email
-                this.age = age
-                this.likedSongs = realmSetOf("")
-                this.subscribedChannels = realmSetOf("")
-            })
-        }
-//        Log.e("User Login", "Logged in")
-        realm.close()
+suspend fun register(user: User, password : String) : Void? {
+    return try {
+        val auth = FirebaseAuth.getInstance()
+        auth.createUserWithEmailAndPassword(user.email, password).await()
+        val db = FirebaseFirestore.getInstance()
+        val temp = HashMap<String, Any>()
+        temp["name"] = user.name
+        temp["age"] = user.age
+        temp["email"] = user.email
+        temp["likedSongs"] = user.likedSongs
+        temp["subscribedChannels"] = user.subscribedChannels
+        db.collection("User")
+            .document(auth.currentUser?.uid.toString())
+            .set(temp)
+            .await()
+    }catch(e:Exception){
+        return null
     }
 }
