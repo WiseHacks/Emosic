@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                 mutableStateOf(Params.LoginScreenRoute)
             }
             val navController = rememberNavController()
-            if(FirebaseAuth.getInstance().currentUser != null){
+            if (FirebaseAuth.getInstance().currentUser != null) {
                 startDestination = Params.DashBoardScreenRoute
             }
             NavHost(navController = navController, startDestination = startDestination) {
@@ -94,15 +94,28 @@ class MainActivity : ComponentActivity() {
                         navController.popBackStack()
                         navController.navigate(Params.MusicPredictionScreenRoute)
                         shouldShowPhoto.value = false
-//                        Image(
-//                            painter = rememberImagePainter(photoUri),
-//                            contentDescription = null,
-//                            modifier = Modifier.fillMaxSize()
-//                        )
                     }
                 }
-                composable(route = Params.MusicPredictionScreenRoute){
+                composable(route = Params.MusicPredictionScreenRoute) {
                     MusicPredictionScreen(
+                        context = this@MainActivity,
+                        navController = navController
+                    )
+                }
+                composable(route = Params.MyProfileScreenRoute) {
+                    MyProfileScreen(
+                        context = this@MainActivity,
+                        navController = navController
+                    )
+                }
+                composable(route = Params.LikedSongsScreenRoute) {
+                    LikedSongsScreen(
+                        context = this@MainActivity,
+                        navController = navController
+                    )
+                }
+                composable(route = Params.LikedChannelsScreenRoute) {
+                    LikedChannelsScreen(
                         context = this@MainActivity,
                         navController = navController
                     )

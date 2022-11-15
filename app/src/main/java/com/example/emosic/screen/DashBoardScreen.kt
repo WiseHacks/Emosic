@@ -1,6 +1,7 @@
 package com.example.emosic.screen
 
 import android.content.Context
+import android.view.View.OnLongClickListener
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -26,6 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.emosic.R
+import com.example.emosic.ui.theme.BorderColor
+import com.example.emosic.ui.theme.InitialDashboardTextColor
+import com.example.emosic.ui.theme.OnclickDashboardTextColor
 import com.example.emosic.utils.*
 import com.google.firebase.auth.FirebaseAuth
 import io.realm.kotlin.mongodb.App
@@ -60,11 +64,11 @@ fun DashBoardScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 item {
-                    WelcomeImage(200.dp)
+                    WelcomeImage(180.dp)
                 }
                 item {
                     var color by remember {
-                        mutableStateOf(Color(0xFFFFCEEC))
+                        mutableStateOf(InitialDashboardTextColor)
                     }
                     Card(
                         modifier = Modifier
@@ -74,7 +78,7 @@ fun DashBoardScreen(
                             .align(Alignment.Center)
                             .alpha(1f)
                             .clickable {
-                                color = Color(0xFFFF28AC)
+                                color = OnclickDashboardTextColor
                                 navController.navigate(Params.CapturePhotoScreenRoute)
                             },
                         elevation = 16.dp,
@@ -100,7 +104,7 @@ fun DashBoardScreen(
                 item {
                     Spacer(modifier = Modifier.height(20.dp))
                     Divider(
-                        color = Color(0xA4FF5757),
+                        color = BorderColor,
                         thickness = 3.dp,
                         modifier = Modifier.padding(horizontal = 120.dp)
                     )
@@ -108,7 +112,7 @@ fun DashBoardScreen(
                 }
                 item {
                     var color by remember {
-                        mutableStateOf(Color(0xFFFFCEEC))
+                        mutableStateOf(InitialDashboardTextColor)
                     }
                     Card(
                         modifier = Modifier
@@ -118,7 +122,7 @@ fun DashBoardScreen(
                             .align(Alignment.Center)
                             .alpha(1f)
                             .clickable {
-//                                color = Color(0xFFFF28AC)
+//                                color = OnclickDashboardTextColor
 //                                navController.navigate(Params.CapturePhotoScreenRoute)
                             },
                         elevation = 16.dp,
@@ -144,7 +148,7 @@ fun DashBoardScreen(
                 item {
                     Spacer(modifier = Modifier.height(10.dp))
                     var color by remember {
-                        mutableStateOf(Color(0xFFFFCEEC))
+                        mutableStateOf(InitialDashboardTextColor)
                     }
                     Card(
                         modifier = Modifier
@@ -154,8 +158,8 @@ fun DashBoardScreen(
                             .align(Alignment.Center)
                             .alpha(1f)
                             .clickable {
-//                                color = Color(0xFFFF28AC)
-//                                navController.navigate(Params.CapturePhotoScreenRoute)
+                                color = OnclickDashboardTextColor
+                                navController.navigate(Params.LikedChannelsScreenRoute)
                             },
                         elevation = 16.dp,
                         shape = RoundedCornerShape(60.dp)
@@ -180,7 +184,7 @@ fun DashBoardScreen(
                 item {
                     Spacer(modifier = Modifier.height(10.dp))
                     var color by remember {
-                        mutableStateOf(Color(0xFFFFCEEC))
+                        mutableStateOf(InitialDashboardTextColor)
                     }
                     Card(
                         modifier = Modifier
@@ -190,8 +194,8 @@ fun DashBoardScreen(
                             .align(Alignment.Center)
                             .alpha(1f)
                             .clickable {
-//                                color = Color(0xFFFF28AC)
-//                                navController.navigate(Params.CapturePhotoScreenRoute)
+                                color = OnclickDashboardTextColor
+                                navController.navigate(Params.LikedSongsScreenRoute)
                             },
                         elevation = 16.dp,
                         shape = RoundedCornerShape(60.dp)
@@ -216,7 +220,7 @@ fun DashBoardScreen(
                 item {
                     Spacer(modifier = Modifier.height(10.dp))
                     var color by remember {
-                        mutableStateOf(Color(0xFFFFCEEC))
+                        mutableStateOf(InitialDashboardTextColor)
                     }
                     Card(
                         modifier = Modifier
@@ -226,7 +230,43 @@ fun DashBoardScreen(
                             .align(Alignment.Center)
                             .alpha(1f)
                             .clickable {
-                                color = Color(0xFFFF28AC)
+                                color = OnclickDashboardTextColor
+                                navController.navigate(Params.MyProfileScreenRoute)
+                            },
+                        elevation = 16.dp,
+                        shape = RoundedCornerShape(60.dp),
+                    ) {
+                        BackgroundImageCardMusic()
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "My Profile",
+                                textAlign = TextAlign.Center,
+                                fontFamily = FontFamily(Font(R.font.kanit_regular)),
+                                fontSize = 30.sp,
+                                modifier = Modifier
+                                    .padding(5.dp),
+                                color = color
+                            )
+                        }
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    var color by remember {
+                        mutableStateOf(InitialDashboardTextColor)
+                    }
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp)
+                            .padding(horizontal = 30.dp)
+                            .align(Alignment.Center)
+                            .alpha(1f)
+                            .clickable {
+                                color = OnclickDashboardTextColor
                                 showProgress = true
                                 FirebaseAuth.getInstance().signOut()
                                 navController.popBackStack()

@@ -8,4 +8,7 @@ object Params{
     const val ForgotPasswordScreenRoute = "forgot_password_screen_route"
     const val CapturePhotoScreenRoute = "capture_photo_screen_route"
     const val MusicPredictionScreenRoute = "music_prediction_screen_route"
+    const val MyProfileScreenRoute = "my_profile_screen_route"
+    const val LikedSongsScreenRoute = "liked_songs_screen_route"
+    const val LikedChannelsScreenRoute = "liked_channels_screen_route"
 }

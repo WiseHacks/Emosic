@@ -1,25 +1,20 @@
 package com.example.emosic.repository
 
-import android.util.Log
 import com.example.emosic.data.User
-import com.example.emosic.utils.Params
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
-// NOTE - MOST PROBABLY WE SHOULD HAVE OBJECT INSTEAD OF CLASS FOR DATA FETCHING.
-
-class UserDataRepositoryImpl {
-    suspend fun getUserData() : User? {
-        return try {
+object UserDataRepositoryImpl_{
+    var user : User? = null
+    suspend fun getUserData() {
+        try {
             val db = FirebaseFirestore.getInstance()
             val snapshot = db.collection("User")
                 .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
                 .get()
                 .await()
-            var user:User? = null
+            var user: User? = null
             if(snapshot.exists()){
                 user = snapshot.toObject(User::class.java)
 //                user = User(
@@ -30,9 +25,9 @@ class UserDataRepositoryImpl {
 //                    snapshot.get("subscribedChannels") as ArrayList<String>,
 //                )
             }
-            return user
+            this.user = user
         }catch (_:Exception){
-            return null
+            user = null
         }
     }
 }

@@ -5,6 +5,7 @@
     <uses-feature android:name="android.hardware.camera.any"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+<!--    android:name="com.chaquo.python.android.PyApplication"-->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -14,7 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Emosic"
-        android:name="com.chaquo.python.android.PyApplication"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"

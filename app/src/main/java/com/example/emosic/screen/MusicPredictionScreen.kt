@@ -16,10 +16,12 @@ import androidx.navigation.NavController
 import com.example.emosic.data.SearchResponse
 import com.example.emosic.data.User
 import com.example.emosic.repository.UserDataRepositoryImpl
+import com.example.emosic.repository.UserDataRepositoryImpl_
 import com.example.emosic.service.YoutubeApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -62,7 +64,15 @@ fun MusicPredictionScreen(
                         if (result != null) {
                             Log.v("query_res", result.size.toString())
                             CoroutineScope(Dispatchers.IO).launch {
-                                user = UserDataRepositoryImpl().getUserData()
+                                // TESTING CODE ...
+                                if(UserDataRepositoryImpl_.user == null){
+                                    UserDataRepositoryImpl_.getUserData()
+                                    user = UserDataRepositoryImpl_.user
+                                    withContext(Dispatchers.Main){
+                                        Log.v("query_exp_changelater", user.toString())
+                                    }
+                                }
+//                                user = UserDataRepositoryImpl().getUserData()
                             }
                             // withcontext can be used
                             if(user != null)Log.v("query_exp_changelater", user.toString())
