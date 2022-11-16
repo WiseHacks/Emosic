@@ -1,0 +1,6 @@
+can drop likedchannels screen and channel class - reason - not required for now
+implement ui for liked songs, design song class
+connect api - prateek
+show complete ui and features
+
+DONE!
