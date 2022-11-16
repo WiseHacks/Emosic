@@ -145,7 +145,7 @@ private fun takePhoto(
 
     val photoFile = File(
         outputDirectory,
-        SimpleDateFormat(filenameFormat, Locale.US).format(System.currentTimeMillis()) + ".jpg"
+        "emosic_image.jpg"
     )
 
     val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
