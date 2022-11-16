@@ -23,12 +23,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.emosic.utils.Params
 import com.example.emosic.screen.*
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
 import io.realm.kotlin.mongodb.App
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.coroutines.suspendCoroutine
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     //    Camera things...
     private lateinit var outputDirectory: File
