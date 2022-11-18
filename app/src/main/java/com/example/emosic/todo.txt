@@ -3,4 +3,10 @@ implement ui for liked songs, design song class
 connect api - prateek
 show complete ui and features
 
-DONE!
+--- ------- -------------- ----------------
+likedrepo - add song function adds in songs collection - just add callback
+ui changes - done, same for channel ??
+
+-----
+api class and stuff - it should be okay..
+---

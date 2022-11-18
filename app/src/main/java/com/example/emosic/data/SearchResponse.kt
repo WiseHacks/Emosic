@@ -1,7 +1,7 @@
 package com.example.emosic.data
 
 import com.google.gson.annotations.SerializedName
-
+// Gson to some class.. look for json structure..
 data class SearchResponse(
     @SerializedName("items")
     val items: List<Item>,
@@ -21,5 +21,4 @@ data class SearchResponse(
             val videoId: String
         )
     }
-    /*TODO - Proper pagination and required details are expected to be extracted*/
 }
