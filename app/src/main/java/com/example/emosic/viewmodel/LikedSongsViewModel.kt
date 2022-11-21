@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.emosic.data.FirestoreResponse
+import com.example.emosic.data.Song
 import com.example.emosic.repository.*
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +33,6 @@ class LikedSongsViewModel @Inject constructor(private val likedSongsRepository :
         addSongResponse = FirestoreResponse.Loading
         addSongResponse = likedSongsRepository.addSongToLikedsongsList(uid, sid)
     }
-
     fun deleteSong(uid : String, sid : String) = viewModelScope.launch {
         deleteSongResponse = FirestoreResponse.Loading
         deleteSongResponse = likedSongsRepository.deleteSongFromLikedSongsList(uid, sid)

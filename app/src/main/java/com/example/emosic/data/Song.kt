@@ -11,9 +11,8 @@ data class Song(
     var artist_uri : String = "",
     var track_name : String = "",
     var track_uri : String = "",
-    var track_href : String = "",
     var duration_ms : String = "",
     var album_name : String = "",
     var album_uri : String = "",
-    var genres : String = "",
+    var genres : List<String> = listOf(""),
 ) : Parcelable

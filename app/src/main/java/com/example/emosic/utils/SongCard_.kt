@@ -1,5 +1,7 @@
 package com.example.emosic.utils
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,14 +19,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.emosic.R
+import com.example.emosic.data.APIResponse
 import com.example.emosic.data.Song
 import com.example.emosic.ui.theme.PlayColor
 import com.example.emosic.ui.theme.ProfileTextColor
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
-fun SongCard(
-    song: Song?,
-    removeSong:(songId : String) -> Unit
+fun SongCard_(
+    context: Context,
+    song: APIResponse.Item?,
+    addSong:(songId : String) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -45,10 +50,26 @@ fun SongCard(
                     Image(
                         modifier = Modifier.clickable {
                             if (song != null) {
-                                removeSong(song.id)
+                                val db = FirebaseFirestore.getInstance()
+                                val temp = HashMap<String, Any>()
+                                temp["id"] = song.id
+                                temp["track_name"] = song.track_name
+                                temp["track_uri"] = song.track_uri
+                                temp["artist_name"] = song.artist_name
+                                temp["artist_uri"] = song.artist_uri
+                                temp["album_name"] = song.album_name
+                                temp["album_uri"] = song.album_uri
+                                temp["duration_ms"] = song.duration_ms
+                                temp["genres"] = song.genres
+                                db.collection("Song").document(song.id).set(temp).addOnCompleteListener {
+                                    if(it.isSuccessful){
+                                        Toast.makeText(context, "Added to liked songs", Toast.LENGTH_SHORT).show()
+                                        addSong(song.id)
+                                    }
+                                }
                             }
                         },
-                        painter = painterResource(id = R.drawable.ic_dislikeicon),
+                        painter = painterResource(id = R.drawable.ic_likeicon),
                         contentDescription = "play"
                     )
                     Spacer(modifier = Modifier.height(40.dp))

@@ -1,6 +1,7 @@
 package com.example.emosic.screen
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -12,16 +13,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.get
 import androidx.navigation.NavController
-import com.example.emosic.data.SearchResponse
+import com.example.emosic.data.APIResponse
+import com.example.emosic.data.Image_emosic
+import com.example.emosic.data.URI_list
 import com.example.emosic.data.User
-import com.example.emosic.repository.UserDataRepositoryImpl
-import com.example.emosic.repository.UserDataRepositoryImpl_
-import com.example.emosic.service.YoutubeApi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.emosic.service.API
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,7 +27,7 @@ import retrofit2.Response
 @Composable
 fun MusicPredictionScreen(
     context: Context,
-    navController: NavController
+    navController: NavController,
 ) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
@@ -50,41 +48,47 @@ fun MusicPredictionScreen(
                 mutableStateOf(null)
             }
             Button(onClick = {
-//                val py = Python.getInstance()
-//                val module = py.getModule("plot")
-//                val sum = module.callAttr("plot", 1, 2)
-//                Log.v("PythonCheck", sum.toString())
-                YoutubeApi.apiInstance().search(searchString = query, maxResults = 50).enqueue(object : Callback<SearchResponse> {
-                    override fun onResponse(
-                        call: Call<SearchResponse>,
-                        response: Response<SearchResponse>
-                    ) {
-                        val result = response.body()?.items
-                        Log.v("query_res", result.toString())
-                        if (result != null) {
-                            Log.v("query_res", result.size.toString())
-                            CoroutineScope(Dispatchers.IO).launch {
-                                // TESTING CODE ...
-                                if(UserDataRepositoryImpl_.user == null){
-                                    UserDataRepositoryImpl_.getUserData()
-                                    user = UserDataRepositoryImpl_.user
-                                    withContext(Dispatchers.Main){
-                                        Log.v("query_exp_changelater", user.toString())
-                                    }
-                                }
-//                                user = UserDataRepositoryImpl().getUserData()
-                            }
-                            // withcontext can be used
-                            if(user != null)Log.v("query_exp_changelater", user.toString())
-                        }
-                    }
-                    override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
-                        Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show()
-                    }
-                })
+                val arg2 = URI_list(listOf("0UaMYEvWZi0ZqiDOoHU3YI"))
+//                val arg1 = Image_emosic(image) // this will be url
+
+//                API.apiInstance().getRecommendations(arg2).enqueue(object : Callback<APIResponse> {
+//                    override fun onResponse(
+//                        call: Call<APIResponse>,
+//                        response: Response<APIResponse>
+//                    ) {
+//                        val result = response.body()?.items
+//                        Log.v("query_res", result.toString())
+//                        Toast.makeText(context, "Got result", Toast.LENGTH_SHORT).show()
+//                        if (result != null) {
+//                            Log.v("query_res", result.toString())
+//                        }
+//                    }
+//                    override fun onFailure(call: Call<APIResponse>, t: Throwable) {
+//                        println(t)
+//                        Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show()
+//                    }
+//                })
+
+//                API.apiInstance().getEmotion(arg1).enqueue(object : Callback<APIResponse> {
+//                    override fun onResponse(
+//                        call: Call<APIResponse>,
+//                        response: Response<APIResponse>
+//                    ) {
+//                        val result = response.body()?.items
+//                        Log.v("query_res", result.toString())
+//                        Toast.makeText(context, "Got result", Toast.LENGTH_SHORT).show()
+//                        if (result != null) {
+//                            Log.v("query_res", result.toString())
+//                        }
+//                    }
+//                    override fun onFailure(call: Call<APIResponse>, t: Throwable) {
+//                        println(t)
+//                        Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show()
+//                    }
+//                })
 
             }) {
-                Text(text = "Search")
+                Text(text = "RUN")
             }
         }
 

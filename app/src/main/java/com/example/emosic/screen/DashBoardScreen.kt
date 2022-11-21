@@ -64,7 +64,7 @@ fun DashBoardScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 item {
-                    WelcomeImage(180.dp)
+                    WelcomeImage(230.dp)
                 }
                 item {
                     var color by remember {
@@ -122,8 +122,8 @@ fun DashBoardScreen(
                             .align(Alignment.Center)
                             .alpha(1f)
                             .clickable {
-//                                color = OnclickDashboardTextColor
-//                                navController.navigate(Params.CapturePhotoScreenRoute)
+                                color = OnclickDashboardTextColor
+                                navController.navigate(Params.RecommendationsScreenRoute)
                             },
                         elevation = 16.dp,
                         shape = RoundedCornerShape(60.dp)
@@ -145,7 +145,7 @@ fun DashBoardScreen(
                         }
                     }
                 }
-                item {
+                /*item {
                     Spacer(modifier = Modifier.height(10.dp))
                     var color by remember {
                         mutableStateOf(InitialDashboardTextColor)
@@ -180,7 +180,7 @@ fun DashBoardScreen(
                             )
                         }
                     }
-                }
+                }*/
                 item {
                     Spacer(modifier = Modifier.height(10.dp))
                     var color by remember {
@@ -268,9 +268,20 @@ fun DashBoardScreen(
                             .clickable {
                                 color = OnclickDashboardTextColor
                                 showProgress = true
-                                FirebaseAuth.getInstance().signOut()
-                                navController.popBackStack()
-                                navController.navigate(Params.LoginScreenRoute)
+                                val builder = android.app.AlertDialog.Builder(context)
+                                builder.setTitle("confirm sign-out")
+                                builder.setMessage("Are you sure?")
+                                builder.setPositiveButton("Yes") { dialog, which ->
+                                    FirebaseAuth.getInstance().signOut()
+                                    navController.navigate(Params.LoginScreenRoute){
+                                        popUpTo(0)
+                                    }
+                                }
+                                builder.setNegativeButton("No") { dialog, which ->
+                                    color = InitialDashboardTextColor
+                                    showProgress = false
+                                }
+                                builder.show()
                             },
                         elevation = 16.dp,
                         shape = RoundedCornerShape(60.dp),

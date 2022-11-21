@@ -3,6 +3,7 @@ package com.example.emosic.screen
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.util.Size
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -56,7 +57,7 @@ fun CapturePhotoScreenView(
 
     val preview = Preview.Builder().build()
     val previewView = remember { PreviewView(context) }
-    val imageCapture: ImageCapture = remember { ImageCapture.Builder().build() }
+    val imageCapture: ImageCapture = remember { ImageCapture.Builder().setTargetResolution(Size(256, 256)).build() }
     val cameraSelector = CameraSelector.Builder()
         .requireLensFacing(lensFacing)
         .build()

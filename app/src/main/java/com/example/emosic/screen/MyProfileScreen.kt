@@ -32,6 +32,7 @@ import com.example.emosic.ui.theme.OnclickProfileButtonColor
 import com.example.emosic.ui.theme.ProfileButtonColor
 import com.example.emosic.ui.theme.ProfileTextColor
 import com.example.emosic.utils.*
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -201,7 +202,19 @@ fun MyProfileScreen(
                                     .padding(horizontal = 5.dp)
                                     .clickable {
                                         colorButton2 = OnclickProfileButtonColor
-                                        navController.navigate(Params.LikedChannelsScreenRoute)
+                                        val builder = android.app.AlertDialog.Builder(context)
+                                        builder.setTitle("confirm sign-out")
+                                        builder.setMessage("Are you sure?")
+                                        builder.setPositiveButton("Yes") { dialog, which ->
+                                            FirebaseAuth.getInstance().signOut()
+                                            navController.navigate(Params.LoginScreenRoute){
+                                                popUpTo(0)
+                                            }
+                                        }
+                                        builder.setNegativeButton("No") { dialog, which ->
+                                            colorButton2 = Color.White
+                                        }
+                                        builder.show()
                                     },
                                     shape = RoundedCornerShape(30.dp),
                                     backgroundColor = ProfileButtonColor
@@ -209,7 +222,7 @@ fun MyProfileScreen(
                                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
                                         Text(
                                             modifier = Modifier.fillMaxWidth(1f),
-                                            text = "Liked channels",
+                                            text = "Sign out", //LikedChannels was here
                                             textAlign = TextAlign.Center,
                                             fontSize = 20.sp,
                                             fontFamily = FontFamily(Font(R.font.kanit_regular)),
