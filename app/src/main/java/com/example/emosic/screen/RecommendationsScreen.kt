@@ -108,23 +108,26 @@ fun RecommendationsList(
         var result : List<APIResponse.Item>? by remember {
             mutableStateOf(null)
         }
-        if (args != null) {
-            API.apiInstance().getRecommendations(args).enqueue(object : Callback<APIResponse> {
-                override fun onResponse(
-                    call: Call<APIResponse>,
-                    response: Response<APIResponse>
-                ) {
-                    showProgress = false
-                    result = response.body()?.items
-                    Toast.makeText(context, "Results fetched successfully", Toast.LENGTH_SHORT).show()
-                }
-                override fun onFailure(call: Call<APIResponse>, t: Throwable) {
-                    Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show()
-                    navController.navigate(Params.DashBoardScreenRoute){
-                        popUpTo(0)
+        LaunchedEffect(key1 = args!=null){
+            if (args != null) {
+                API.apiInstance().getRecommendations(args).enqueue(object : Callback<APIResponse> {
+                    override fun onResponse(
+                        call: Call<APIResponse>,
+                        response: Response<APIResponse>
+                    ) {
+                        showProgress = false
+                        result = response.body()?.items
+                        Toast.makeText(context, "Results fetched successfully", Toast.LENGTH_SHORT).show()
                     }
-                }
-            })
+
+                    override fun onFailure(call: Call<APIResponse>, t: Throwable) {
+                        Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show()
+                        navController.navigate(Params.DashBoardScreenRoute){
+                            popUpTo(0)
+                        }
+                    }
+                })
+            }
         }
         Card(modifier = Modifier
             .fillMaxSize()
