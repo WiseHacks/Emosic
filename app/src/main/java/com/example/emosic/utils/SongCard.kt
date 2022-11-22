@@ -1,5 +1,8 @@
 package com.example.emosic.utils
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,6 +26,7 @@ import com.example.emosic.ui.theme.ProfileTextColor
 
 @Composable
 fun SongCard(
+    context: Context,
     song: Song?,
     removeSong:(songId : String) -> Unit
 ) {
@@ -52,7 +56,14 @@ fun SongCard(
                         contentDescription = "play"
                     )
                     Spacer(modifier = Modifier.height(40.dp))
-                    Row(Modifier.rotate(270f), verticalAlignment = Alignment.CenterVertically) {
+                    Row(Modifier.rotate(270f)
+                        .clickable {
+                            val uri = Uri.parse("https://open.spotify.com/track/${song?.id}")
+                            val intent = Intent(Intent.ACTION_VIEW, uri)
+                            context.startActivity(intent)
+                        },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
                             text = "PLAY",
                             fontFamily = FontFamily(Font(R.font.kanit_regular)),

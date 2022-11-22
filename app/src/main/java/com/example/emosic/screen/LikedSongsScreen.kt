@@ -54,6 +54,7 @@ fun LikedSongsScreen(
             is FirestoreResponse.Success -> {
 //                println("Data loading success $SongIdsResponse")
                 SongsList(
+                    context = context,
                     songIdsResponse = SongIdsResponse.data,
                     removeSong = {songId ->
                         viewModel.deleteSong(FirebaseAuth.getInstance().currentUser?.uid.toString(), songId)
@@ -70,6 +71,7 @@ fun LikedSongsScreen(
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun SongsList(
+    context: Context,
     songIdsResponse: SongIds,
     removeSong:(songId : String) -> Unit
 ) {
@@ -108,7 +110,7 @@ fun SongsList(
                         }
                     }
                     if(!showProgress && song != null){
-                        SongCard(song = song, removeSong)
+                        SongCard(context, song, removeSong)
                     }
                 }
             }

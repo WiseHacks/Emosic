@@ -1,6 +1,7 @@
 package com.example.emosic.service
 
 import com.example.emosic.data.APIResponse
+import com.example.emosic.data.APIResponseWithEmotion
 import com.example.emosic.data.Image_emosic
 import com.example.emosic.data.URI_list
 import retrofit2.Call
@@ -10,9 +11,9 @@ import retrofit2.http.POST
 interface APIService {
     @POST("recommend1/")
     @JvmSuppressWildcards
-    fun getEmotion(
+    fun getRecommendationsWithEmotion(
         @Body image: Image_emosic,
-    ) : Call<APIResponse>
+    ) : Call<APIResponseWithEmotion>
 
     @POST("recommend2/")
     fun getRecommendations(

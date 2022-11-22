@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.example.emosic.utils.ProgressIndicator
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -76,7 +77,6 @@ fun CapturePhotoScreenView(
     }
 
     // 3
-
     Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
         AndroidView({ previewView }, modifier = Modifier.fillMaxSize())
         Row(modifier = Modifier.fillMaxWidth(),

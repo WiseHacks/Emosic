@@ -144,7 +144,18 @@ fun RecommendationsList(
                 if(result != null){
                     items(result!!) { item ->
 //                        println(item.toString())
-                        SongCard_(context = context, song = item, addSong = addSong)
+                        val song = Song(
+                            item.id,
+                            item.artist_name,
+                            item.artist_uri,
+                            item.track_name,
+                            item.track_uri,
+                            item.duration_ms,
+                            item.album_name,
+                            item.album_uri,
+                            item.genres
+                        )
+                        SongCard_(context = context, song = song, addSong = addSong)
                     }
                 }
             }

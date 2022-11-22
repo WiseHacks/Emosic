@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,7 +24,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.emosic.utils.Params
 import com.example.emosic.screen.*
+import com.example.emosic.utils.ProgressIndicator
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileDescriptor
@@ -55,6 +58,7 @@ class MainActivity : ComponentActivity() {
     }
 
     //    Camera things...
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -95,15 +99,16 @@ class MainActivity : ComponentActivity() {
                     }
                     if (shouldShowPhoto.value) {
                         Log.e("emosic_cam", photoUri.toString())
+                        shouldShowPhoto.value = false
                         navController.popBackStack()
                         navController.navigate(Params.MusicPredictionScreenRoute)
-                        shouldShowPhoto.value = false
                     }
                 }
                 composable(route = Params.MusicPredictionScreenRoute) {
                     MusicPredictionScreen(
                         context = this@MainActivity,
-                        navController = navController
+                        navController = navController,
+                        photoUri = photoUri
                     )
                 }
                 composable(route = Params.MyProfileScreenRoute) {
